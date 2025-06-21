@@ -1,48 +1,42 @@
-use std::fmt;
-use std::fmt::{Display, Write};
+pub mod tokens;
+use std::{iter::Peekable, str::Chars};
 
-pub(crate) enum Token {
-    NUMBER(i32),
-    PLUS,
-    MINUS,
-    MUL,
-    DIV,
-    POW,
-    LEFTPAREN,
-    RIGHTPAREN,
-    VARIABLE(char),
-    EOF,
+use tokens::{Token, WhiteSpace};
+
+#[derive(PartialEq, Debug)]
+/// Storing the location of individual expression in a given expression
+pub(crate) struct Location {
+    pub expr_idx: usize,
 }
 
-impl Display for Token {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::PLUS => f.write_str("+"),
-            Self::MINUS => f.write_str("-"),
-            Self::MUL => f.write_str("*"),
-            Self::DIV => f.write_str("/"),
-            Self::POW => f.write_str("^"),
-            Self::LEFTPAREN => f.write_str("("),
-            Self::RIGHTPAREN => f.write_str(")"),
-            Self::EOF => f.write_str("<EOF>"),
-            Self::NUMBER(val) => write!(f, "{}", val),
-            Self::VARIABLE(name) => write!(f, "{}", name),
-        }
+impl Default for Location {
+    fn default() -> Self {
+        Self { expr_idx: 0 }
     }
 }
 
-pub(crate) enum WhiteSpace {
-    SPACE,
-    TAB,
-    NEWLINE,
+#[derive(Debug, PartialEq)]
+/// Storing the [Token] variant with the location of the token
+pub(super) struct TokenWithLocation {
+    pub variant: Token,
+    pub location: Location,
 }
-impl Display for WhiteSpace {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_char(match self {
-            Self::TAB => '\t',
-            Self::SPACE => ' ',
-            Self::NEWLINE => '\n',
-        })
+
+impl TokenWithLocation {
+    /// donot reference the location  
+    pub fn token_only(self) -> Token {
+        self.variant
+    }
+
+    /// Reference to &Token
+    pub fn token(&self) -> &Token {
+        &self.variant
     }
 }
 
+/// Handling/storing the token stream:probably from the main function
+struct Stream<'i> {
+    input: &'i str,
+    location: Location,
+    chars: Peekable<Chars<'i>>,
+}
