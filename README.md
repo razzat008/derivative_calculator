@@ -9,5 +9,10 @@ So...
 - I'll be writing a tokenizer and parser from scratch
 lets see how that goes
 
+# update 1 (2025-06-21)
+- currently working on the tokenizer (still) i focused more on writing better code instead of just programming it out
+ I'm taking references from the docs and existing tokenizers lets see how this goes
+
 ## References
 - (Structure and Interpretation of Computer Programs)[https://web.mit.edu/6.001/6.037/sicp.pdf]
+- (An implementation of a database from scratch in rust)[https://github.com/antoniosarosi/mkdb]
