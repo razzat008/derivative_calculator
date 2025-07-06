@@ -1,31 +1,47 @@
-use std::{
-    io::{self},
-    process::exit,
-};
-
+#![allow(unused_variables)]
 mod tokenizer;
 
+use rustyline::{error::ReadlineError, DefaultEditor};
 
-fn main() {
+fn display_help() {
+    println!("Type a mathematical expression to tokenize it.");
+    println!("Type 'help' to display this.");
+    println!("Type 'exit' to quit.");
+    println!("You can enter expressions using numbers, variables (like x), operators (+, -, *, /, ^), and parentheses.");
+    println!("Examples:");
+    println!("  2*x + 3");
+    println!("  (x^2 + 2*x + 1) / (x + 1)");
+}
+
+fn main() -> rustyline::Result<()> {
+    let mut read_line = DefaultEditor::new()?;
+    read_line.load_history("history.txt").ok();
+    read_line.append_history("history.txt")?;
+    println!("\n====Symbolic Derivative Calculator====\n");
     loop {
-        let mut buffer: String = String::new();
-        let stdin = io::stdin();
-
-        match stdin.read_line(&mut buffer) {
-            Ok(exp) => {
-                if size_of_val(&exp) == 0 {
-                    buffer.clear();
+        let line = match read_line.readline("Expr> ") {
+            Ok(line) => {
+                if line.trim() == "exit" {
+                    println!("Exiting...");
+                    break Ok(());
+                }
+                if line.trim() == "help" {
+                    display_help();
                     continue;
                 }
-                if buffer.contains("exit") {
-                    buffer.clear();
-                    println!("Exiting....");
-                    exit(0)
+                let mut tokenizer = tokenizer::Tokenizer::new(&line);
+                let tokens = tokenizer.tokenize();
+                println!("{tokens:?}");
+            }
+
+            Err(e) => {
+                match e {
+                    ReadlineError::Interrupted => println!("CTRL-C detected!!"),
+                    ReadlineError::Eof => println!("CTRL-D detected!!"),
+                    other => println!("Error: {other:?}"),
                 }
+                break Ok(());
             }
-            Err(error) => {
-                println!("{error}");
-            }
-        }
+        };
     }
 }
