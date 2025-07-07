@@ -12,28 +12,37 @@ impl Parser {
         Parser { tokens, pos: 0 }
     }
 
+    /// Peek at the next non-whitespace token.
     fn peek(&self) -> Option<&Token> {
-        self.tokens.get(self.pos)
+        self.tokens[self.pos..]
+            .iter()
+            .find(|t| !matches!(t, Token::WhiteSpace(_)))
     }
 
+    /// Advance the parser to the next non-whitespace token.
     fn next(&mut self) -> Option<&Token> {
-        let tok = self.tokens.get(self.pos);
-        self.pos += 1;
-        tok
+        while let Some(tok) = self.tokens.get(self.pos) {
+            self.pos += 1;
+            if !matches!(tok, Token::WhiteSpace(_)) {
+                return Some(tok);
+            }
+        }
+        None
     }
 
     pub fn parse(&mut self) -> Option<Expr> {
         let expr = self.parse_expr()?;
         // Ensure all tokens are consumed (except whitespace or EOF)
-        while let Some(token) = self.peek() {
-            match token {
-                Token::WhiteSpace(_) => {
-                    self.next();
-                }
-                Token::EOF => break,
-                _ => return None, // Unexpected token after valid expr
-            }
-        }
+        // Not needed as parser already ensures no whitespaces are consumed
+        // while let Some(token) = self.peek() {
+        //     match token {
+        //         Token::WhiteSpace(_) => {
+        //             self.next();
+        //         }
+        //         Token::EOF => break,
+        //         _ => return None, // Unexpected token after valid expr
+        //     }
+        // }
         Some(expr)
     }
 
