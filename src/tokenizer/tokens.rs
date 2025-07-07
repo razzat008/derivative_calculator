@@ -2,7 +2,7 @@
 use std::fmt::{self, Display, Write};
 
 // Possible(valid) tokens that can be found on a mathematical expressions entered by the user.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub(crate) enum Token {
     NUMBER(i32),
     PLUS,
@@ -37,7 +37,7 @@ impl Display for Token {
 }
 
 // Possible WhiteSpaces that can be encountered while parsing mathematical expressions
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub(crate) enum WhiteSpace {
     SPACE,
     TAB,
