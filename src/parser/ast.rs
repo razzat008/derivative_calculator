@@ -1,10 +1,9 @@
-use crate::tokenizer::tokens::Token;
-
 #[derive(Debug, Clone, PartialEq)]
 /// Represents an expression in the AST. An expression is just a variation of these enum members.
 pub enum Expr {
     Number(i32),
     Variable(char),
+    Constant(char),
     UnaryOp {
         op: UnaryOp,
         expr: Box<Expr>,

@@ -127,6 +127,11 @@ impl Parser {
                 self.next();
                 Some(Expr::Variable(c))
             }
+            Token::CONSTANT(c) => {
+                let c = *c;
+                self.next();
+                Some(Expr::Constant(c))
+            }
             Token::LEFTPAREN => {
                 self.next();
                 let expr = self.parse_expr();

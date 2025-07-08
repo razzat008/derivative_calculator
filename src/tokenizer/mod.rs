@@ -196,7 +196,8 @@ impl<'i> Tokenizer<'i> {
             '(' => self.consume(Token::LEFTPAREN),
             ')' => self.consume(Token::RIGHTPAREN),
             '0'..='9' => self.tokenize_number(),
-            'a'..='z' | 'A'..='Z' => self.tokenize_variable(),
+            'x' => self.tokenize_variable(),
+            'a'..='w' | 'y'..='z' | 'A'..='W' | 'Y'..='Z' => self.tokenize_constants(),
             _ => {
                 let error_kind = ErrorKind::UnexpectedOrUnsupportedToken(*chr);
                 self.error(error_kind)
@@ -231,11 +232,26 @@ impl<'i> Tokenizer<'i> {
 
     /// Tokenizes a variable (single alphabetic character).
     fn tokenize_variable(&mut self) -> TokenResult {
-        let var_str = self.stream.take_while(|chr| chr.is_ascii_alphabetic());
+        let var_str = self.stream.take_while(|&chr| chr == 'x');
         if var_str.len() == 1 {
             Ok(Token::VARIABLE(var_str.chars().next().unwrap()))
         } else {
             self.error(ErrorKind::Other("Invalid variable".to_string()))
+        }
+    }
+
+    fn tokenize_constants(&mut self) -> TokenResult {
+        if let Some(&chr) = self.stream.peek() {
+            if ('a'..='z').contains(&chr) && chr != 'x' {
+                self.stream.next();
+                Ok(Token::CONSTANT(chr))
+            } else {
+                self.error(ErrorKind::Other(
+                    "Neither a constant nor a variable!".to_string(),
+                ))
+            }
+        } else {
+            self.error(ErrorKind::Other("Unexpected end of input!".to_string()))
         }
     }
 }

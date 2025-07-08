@@ -13,6 +13,7 @@ pub(crate) enum Token {
     LEFTPAREN,
     RIGHTPAREN,
     VARIABLE(char),
+    CONSTANT(char),
     EOF,
     WhiteSpace(WhiteSpace),
 }
@@ -31,6 +32,7 @@ impl Display for Token {
             Self::EOF => f.write_str("<EOF>"),
             Self::NUMBER(val) => write!(f, "{}", val),
             Self::VARIABLE(name) => write!(f, "{}", name),
+            Self::CONSTANT(c) => write!(f, "{}", c),
             Self::WhiteSpace(whitespace) => write!(f, "{whitespace}"),
         }
     }
