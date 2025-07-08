@@ -4,9 +4,10 @@ mod tokenizer;
 
 use rustyline::{error::ReadlineError, DefaultEditor};
 
+/// Displays help information for the calculator.
 fn display_help() {
     println!("Type a mathematical expression to tokenize it.");
-    println!("Type 'help' to display this.");
+    println!("Type 'help' or '\\h' to display this.");
     println!("Type 'exit' or '\\e' to quit.");
     println!("You can enter expressions using numbers, variables (like x), operators (+, -, *, /, ^), and parentheses.");
     println!("Examples:");
@@ -16,7 +17,6 @@ fn display_help() {
 
 fn main() -> rustyline::Result<()> {
     let mut read_line = DefaultEditor::new()?;
-    read_line.load_history("history.txt").ok();
     read_line.append_history("history.txt")?;
     println!("\n====Symbolic Derivative Calculator====\n");
     loop {
@@ -27,7 +27,7 @@ fn main() -> rustyline::Result<()> {
                     println!("Bye!!");
                     break Ok(());
                 }
-                if line.trim() == "help" {
+                if line.trim() == "help" || line.trim() == "\\h" {
                     display_help();
                     continue;
                 }
