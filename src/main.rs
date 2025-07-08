@@ -17,11 +17,15 @@ fn display_help() {
 
 fn main() -> rustyline::Result<()> {
     let mut read_line = DefaultEditor::new()?;
-    read_line.append_history("history.txt")?;
+    if let Err(_) = read_line.load_history("history.txt")  {
+        println!("No previous history found.");
+    }
+
     println!("\n====Symbolic Derivative Calculator====\n");
     loop {
         let line = match read_line.readline("Expr> ") {
             Ok(line) => {
+                read_line.add_history_entry(line.clone());
                 if line.trim() == "exit" || line.trim() == "\\e" {
                     println!("Exiting...");
                     println!("Bye!!");
@@ -29,6 +33,10 @@ fn main() -> rustyline::Result<()> {
                 }
                 if line.trim() == "help" || line.trim() == "\\h" {
                     display_help();
+                    continue;
+                }
+                if line.trim() == "clear" || line.trim() == "\\c" {
+
                     continue;
                 }
                 let mut tokenizer = tokenizer::Tokenizer::new(&line);
