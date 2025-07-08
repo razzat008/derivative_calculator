@@ -1,0 +1,10 @@
+Grammar for the derivative_calculator
+expr    = term (('+' | '-') term)*
+term    = factor (('*' | '/') factor)*
+factor  = base ('^' factor)?
+base    = NUMBER | VARIABLE | '(' expr ')' | '-' base
+
+expr handles addition and subtraction
+term handles multiplication and division
+factor handles exponentiation
+base handles numbers, variables, parentheses, and unary minus
