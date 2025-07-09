@@ -1,6 +1,8 @@
 #![allow(unused_variables)]
+pub mod differentiator;
 mod parser;
 mod tokenizer;
+use crate::parser::ast::Expr;
 
 use rustyline::{error::ReadlineError, DefaultEditor};
 
@@ -17,7 +19,7 @@ fn display_help() {
 
 fn main() -> rustyline::Result<()> {
     let mut read_line = DefaultEditor::new()?;
-    if let Err(_) = read_line.load_history("history.txt")  {
+    if let Err(_) = read_line.load_history("history.txt") {
         println!("No previous history found.");
     }
 
@@ -36,17 +38,21 @@ fn main() -> rustyline::Result<()> {
                     continue;
                 }
                 if line.trim() == "clear" || line.trim() == "\\c" {
-
                     continue;
                 }
                 let mut tokenizer = tokenizer::Tokenizer::new(&line);
                 let tokens = tokenizer.tokenize().unwrap();
                 let mut parser = parser::Parser::new(tokens.clone());
                 match parser.parse() {
-                    Some(ast) => println!("Parsed AST: {ast:?}"),
+                    Some(ast) => {
+                        // println!("Parsed AST: {ast:?}");
+                        let derivative = differentiator::differentiate(&ast);
+                        let simplified = derivative.simplify();
+                        println!("Derivative: {:?}", simplified.pretty());
+                    }
                     None => println!("Parse error: "),
                 }
-                println!("{tokens:?}");
+                // println!("{tokens:?}");
             }
 
             Err(e) => {
